@@ -11,7 +11,6 @@ import PropTypes from 'prop-types';
 import { isUndefined } from 'lodash-es';
 import '@douyinfe/semi-foundation/modal/modal.scss';
 import { noop } from 'lodash-es';
-import ContentTransition from './ModalTransition';
 import BaseComponent from '../_base/baseComponent';
 import confirm, {
     withConfirm,
@@ -323,13 +322,7 @@ class Modal extends BaseComponent<ModalReactProps, ModalState> {
         return <ModalContent {...restProps} footer={renderFooter} onClose={this.handleCancel} />;
     };
 
-    renderDialogWithTransition = ({
-        opacity,
-        scale,
-    }: {
-        opacity?: CSSProperties['opacity'];
-        scale?: number;
-    } = {}) => {
+    renderDialog = () => {
         let {
             footer,
             className,
@@ -339,6 +332,7 @@ class Modal extends BaseComponent<ModalReactProps, ModalState> {
             style: styleFromProps,
             zIndex,
             getPopupContainer,
+            visible,
             ...restProps
         } = this.props;
         let maskStyle = maskStyleFromProps;
@@ -349,20 +343,6 @@ class Modal extends BaseComponent<ModalReactProps, ModalState> {
                 transform: 'translateY(-50%)',
                 top: '50%', ...style,
             };
-        }
-        if (!isUndefined(opacity)) {
-            maskStyle = { opacity, ...maskStyle };
-            style = { opacity, ...style };
-        }
-
-        if (!isUndefined(scale)) {
-            style = { transform: `scale(${scale})`, ...style };
-            if (this.props.centered) {
-                style = {
-                    ...style,
-                    transform: `scale(${scale}) translateY(-${50 / scale}%)`,
-                };
-            }
         }
         let wrapperStyle: {
             zIndex?: CSSProperties['zIndex'];
@@ -378,8 +358,13 @@ class Modal extends BaseComponent<ModalReactProps, ModalState> {
         }
 
         const classList = cls(className, {
-            [`${cssClasses.DIALOG}-hidden`]: keepDOM && this.state.hidden,
+            [`${cssClasses.DIALOG}-displayNone`]: keepDOM && this.state.hidden,
+            [`${cssClasses.DIALOG}-animate-hide`]:this.state.hidden,
+            [`${cssClasses.DIALOG}-animate-show`]:!this.state.hidden,
         });
+
+        // let maskClassName=visible?'modal-'
+
         return (
             <Portal style={wrapperStyle} getPopupContainer={getPopupContainer}>
                 <ModalContent
@@ -388,6 +373,8 @@ class Modal extends BaseComponent<ModalReactProps, ModalState> {
                     className={classList}
                     getPopupContainer={getPopupContainer}
                     maskStyle={maskStyle}
+                    // maskClassName={maskClassName}
+                    // contentClassName={contentClassName}
                     style={style}
                     ref={this.modalRef}
                     footer={renderFooter}
@@ -406,18 +393,10 @@ class Modal extends BaseComponent<ModalReactProps, ModalState> {
         } = this.props;
         this._active = this._active || visible;
         const shouldRender = (visible || keepDOM) && (!lazyRender || this._active);
-
-        const mergedMotion = this.foundation.getMergedMotion();
-        if (mergedMotion) {
-            return (
-                <ContentTransition motion={mergedMotion} controlled={keepDOM} visible={visible}>
-                    {shouldRender ? (...animationState) => this.renderDialogWithTransition(...animationState) : null}
-                </ContentTransition>
-            );
-        }
-
+        alert('test')
+        console.log('shouldRender',shouldRender);
         if (shouldRender) {
-            return this.renderDialogWithTransition();
+            return this.renderDialog();
         }
 
         return null;

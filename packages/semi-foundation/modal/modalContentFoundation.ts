@@ -6,6 +6,8 @@ export interface ModalContentProps extends ModalProps{
     onClose: (e: any) => void;
     getContainerContext: () => any;
     isFullScreen?: boolean;
+    contentClassName:string,
+    maskClassName:string
 }
 
 export interface ModalContentState{

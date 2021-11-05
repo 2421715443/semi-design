@@ -23,11 +23,15 @@ export default class ModalContent extends BaseComponent<ModalContentProps, Modal
     static propTypes = {
         close: PropTypes.func,
         getContainerContext: PropTypes.func,
+        contentClassName:PropTypes.string,
+        maskClassName:PropTypes.string
     };
 
     static defaultProps = {
         close: noop,
         getContainerContext: noop,
+        contentClassName:'',
+        maskClassName:''
     };
     dialogId: string;
     private timeoutId: NodeJS.Timeout;
@@ -107,12 +111,12 @@ export default class ModalContent extends BaseComponent<ModalContentProps, Modal
 
     getMaskElement = () => {
         const { ...props } = this.props;
-        const { mask } = props;
+        const { mask,maskClassName } = props;
         if (mask) {
             const className = cls(`${cssClasses.DIALOG}-mask`, {
                 // [`${cssClasses.DIALOG}-mask-hidden`]: !props.visible,
             });
-            return <div key="mask" className={className} style={props.maskStyle} />;
+            return <div key="mask" className={className+' '+maskClassName} style={props.maskStyle} />;
         }
         return null;
     };
@@ -211,7 +215,7 @@ export default class ModalContent extends BaseComponent<ModalContentProps, Modal
         const dialogElement = (
             <div
                 key="dialog-element"
-                className={digCls}
+                className={digCls +''+props.contentClassName}
                 onMouseDown={this.onDialogMouseDown}
                 style={{ ...props.style, ...style }}
                 id={this.dialogId}

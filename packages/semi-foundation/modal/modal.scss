@@ -65,6 +65,7 @@ $module: #{$prefix}-modal;
         background-clip: padding-box;
         overflow: hidden;
         @include shadow-elevated;
+        animation:  #{$module}-show 1s ease-in 0s;
     }
 
     &-content-fullScreen {
@@ -193,8 +194,43 @@ $module: #{$prefix}-modal;
     }
 }
 
-.#{$module}-hidden {
+.#{$module}-displayNone {
     display: none;
 }
+
+.#{$module}-animate-hide{
+  animation:  #{$module}-hide 1s ease-in 0s;
+}
+.#{$module}-animate-show{
+  animation:  #{$module}-hide 1s ease-in 0s;
+}
+
+
+
+@keyframes #{$module}-show {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes #{$module}-hide {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0);
+    display: none;
+  }
+}
+
 
 @import "./rtl.scss";
